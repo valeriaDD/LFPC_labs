@@ -6,9 +6,11 @@ public class Automata {
     private final ArrayList<String> F = new ArrayList<>();
     private final ArrayList<String> Alphabet = new ArrayList<>();
     private final HashMap<String, ArrayList<HashMap<String, Set<String>>>> Transactions = new HashMap<>();
+    private ArrayList<Set<String>> executedList = new ArrayList<>();
 
     Scanner scanner = new Scanner(System.in);
 
+    // Functions for Automata formming
     private String[] scanAndSplit(String regex) {
         String scannedStr = scanner.nextLine();
         return scannedStr.split(regex);
@@ -108,6 +110,7 @@ public class Automata {
         addTransactions();
     }
 
+    //Print NFA
     public void printAutomata() {
         if (!Q.isEmpty()) {
             for (Map.Entry<String, ArrayList<HashMap<String, Set<String>>>> entry : Transactions.entrySet()) {
@@ -119,6 +122,28 @@ public class Automata {
         }
     }
 
+    // Transform NFA to DFA
+    public void toDFA() {
+        HashMap<Set<String>, ArrayList<HashMap<String, Set<String>>>> DFA = new HashMap<>();
+        DFA = initiateDFA();
+
+        Set<String> initialState = new HashSet<>();
+        initialState.add(startState);
+
+        ArrayList<Set<String>> nextStates = new ArrayList<>();
+        nextStates = findNextStates(Transactions.get(startState));
+
+        while (!nextStates.isEmpty()) {
+            Set<String> state = nextStates.get(0);
+            DFA.put(state, findNewStatesValues(state));
+            executedList.add(state);
+            nextStates.addAll(findNextStates(DFA.get(state)));
+            nextStates = removeExecutedStates(nextStates);
+        }
+        printDFA(DFA);
+    }
+
+    // All functions for DFA construction
     private HashMap<Set<String>, ArrayList<HashMap<String, Set<String>>>> initiateDFA() {
         HashMap<Set<String>, ArrayList<HashMap<String, Set<String>>>> DFA = new HashMap<>();
 
@@ -127,6 +152,7 @@ public class Automata {
 
         initialKey.add(startState);
         DFA.put(initialKey, initialValue);
+        executedList.add(initialKey);
 
         return DFA;
     }
@@ -162,7 +188,7 @@ public class Automata {
         return NewStateValues;
     }
 
-    public void printDFA(HashMap<Set<String>, ArrayList<HashMap<String, Set<String>>>> DFA) {
+    private void printDFA(HashMap<Set<String>, ArrayList<HashMap<String, Set<String>>>> DFA) {
         System.out.println(" ");
         for (Map.Entry<Set<String>, ArrayList<HashMap<String, Set<String>>>> entry : DFA.entrySet()) {
             Set<String> key = entry.getKey();
@@ -172,30 +198,14 @@ public class Automata {
         }
     }
 
-    public void toDFA() {
-        HashMap<Set<String>, ArrayList<HashMap<String, Set<String>>>> DFA = new HashMap<>();
-        DFA = initiateDFA();
-
-        Set<String> initialState = new HashSet<>();
-        initialState.add(startState);
-
-        ArrayList<Set<String>> nextStates = new ArrayList<>();
-        nextStates = findNextStates(Transactions.get(startState));
-
-
-            Set<String> state = nextStates.get(0);
-            DFA.put(state, findNewStatesValues(state));
-            nextStates.addAll(findNextStates(DFA.get(state)));
-
-        System.out.println(nextStates);
-
-
-
-
-
-        printDFA(DFA);
-
+    private ArrayList<Set<String>> removeExecutedStates(ArrayList<Set<String>> statesList) {
+        ArrayList<Set<String>> newList = new ArrayList<>();
+        for (Set<String> element : statesList)
+            if (!executedList.contains(element) &&
+                    !element.isEmpty() &&
+                    !newList.contains(element)) {
+                newList.add(element);
+            }
+        return newList;
     }
-
-
 }
