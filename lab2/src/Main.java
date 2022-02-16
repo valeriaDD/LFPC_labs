@@ -3,5 +3,6 @@ public class Main {
         Automata NFA = new Automata();
         NFA.inputAutomata();
         NFA.printAutomata();
+        NFA.toDFA();
     }
 }
