@@ -23,7 +23,6 @@ public class Automata {
         Collections.addAll(Q, splitScannedStr);
     }
 
-
     private void addF() {
         System.out.println("Add values of the Final States in format: F = q1 q2");
         System.out.print("F = ");
@@ -46,61 +45,67 @@ public class Automata {
         Collections.addAll(Alphabet, splitScannedStr);
     }
 
-    private boolean verifyInput(String @NotNull [] splitByEqual, String @NotNull [] splitByComma) {
-        return Q.contains(splitByComma[0])
-                && Q.contains(splitByEqual[splitByEqual.length - 1])
-                && Alphabet.contains(splitByComma[splitByComma.length - 1]);
+    private boolean verifyInput(String Node1, String Node2, String transitionVariable) {
+        return Q.contains(Node1)
+                && Q.contains(Node2)
+                && Alphabet.contains(transitionVariable);
     }
 
     private void addTransaction() {
-        System.out.println("How many transactions do you have?");
-        int transactionsNr = scanner.nextInt();
+        String scannedStr = null;
         System.out.println("Add transactions in this format: \n\tq1,a=q2 \n\tq2,b=q2 ");
         System.out.print("Transactions = ");
 
-        while (transactionsNr >= 0) {
-            String[] splitByEqual = scanAndSplit("=");
+        while (!(scannedStr = scanner.nextLine()).isEmpty()) {
+            String[] splitByEqual = scannedStr.split("=");
             String[] splitByComma = splitByEqual[0].split(",");
 
             String Node1 = splitByComma[0];
             String transitionVariable = splitByComma[splitByComma.length - 1];
             String Node2 = splitByEqual[splitByEqual.length - 1];
 
-            Set<String> newSet = new HashSet<String>();
-            HashMap<String, Set<String>> newHashMap = new HashMap<>();
-            ArrayList<HashMap<String, Set<String>>> value = new ArrayList<>();
+            if(verifyInput(Node1,Node2, transitionVariable)) {
+                Set<String> newSet = new HashSet<String>();
+                HashMap<String, Set<String>> newHashMap = new HashMap<>();
+                ArrayList<HashMap<String, Set<String>>> value = new ArrayList<>();
 
-            if (!Transactions.containsKey(Node1)) {
-                newSet.add(Node2);
-                newHashMap.put(transitionVariable, newSet);
-                value.add(newHashMap);
-                Transactions.put(Node1, value);
-            } else {
-                value = Transactions.get(Node1);
-                for (HashMap<String, Set<String>> element : value)
-                    if (element.containsKey(transitionVariable)) {
-                        newSet = element.get(transitionVariable);
-                        newSet.add(Node2);
-                        element.replace(transitionVariable, newSet);
-                    } else {
-                        newSet.add(Node2);
-                        element.put(transitionVariable, newSet);
-                    }
+                if (!Transactions.containsKey(Node1)) {
+                    newSet.add(Node2);
+                    newHashMap.put(transitionVariable, newSet);
+                    value.add(newHashMap);
+                    Transactions.put(Node1, value);
+                } else {
+                    value = Transactions.get(Node1);
+                    for (HashMap<String, Set<String>> element : value)
+                        if (element.containsKey(transitionVariable)) {
+                            newSet = element.get(transitionVariable);
+                            newSet.add(Node2);
+                            element.replace(transitionVariable, newSet);
+                        } else {
+                            newSet.add(Node2);
+                            element.put(transitionVariable, newSet);
+                        }
                 }
-            transactionsNr--;
+            }else
+                System.out.println("Error, alphabet or q do not match");
         }
     }
 
     public void inputAutomata() {
-//        addQ();
-//        addF();
-//        addAlphabet();
+        addQ();
+        addF();
+        addAlphabet();
         addTransaction();
-        System.out.println(Transactions);
     }
 
-    public static void main(String[] args) {
-        Automata NFA = new Automata();
-        NFA.inputAutomata();
+    public void printAutomata(){
+        if(!Q.isEmpty()){
+            for (Map.Entry<String, ArrayList<HashMap<String, Set<String>>>> entry : Transactions.entrySet()) {
+                String key = entry.getKey();
+                Object value = entry.getValue();
+                System.out.print(key + " -> ");
+                System.out.println(value);
+            }
+        }
     }
 }
