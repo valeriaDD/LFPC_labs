@@ -3,7 +3,7 @@ import java.util.*;
 public class Automata {
     private final ArrayList<String> Q = new ArrayList<>();
     private String startState = "q0";
-    private final ArrayList<String> F = new ArrayList<>();
+    private final Set<String> F = new HashSet<>();
     private final ArrayList<String> Alphabet = new ArrayList<>();
     private final HashMap<String, ArrayList<HashMap<String, Set<String>>>> Transactions = new HashMap<>();
     private ArrayList<Set<String>> executedList = new ArrayList<>();
@@ -43,6 +43,7 @@ public class Automata {
 //                System.out.println("Error: Final state should be a part of Q");
 //            }
         F.add("q3");
+        F.add("q4");
     }
 
     private void addAlphabet() {
@@ -110,12 +111,19 @@ public class Automata {
         addTransactions();
     }
 
-    //Print NFA
     public void printAutomata() {
         if (!Q.isEmpty()) {
             for (Map.Entry<String, ArrayList<HashMap<String, Set<String>>>> entry : Transactions.entrySet()) {
                 String key = entry.getKey();
                 Object value = entry.getValue();
+                Set<String> keySet = new HashSet<>();
+                keySet.add(key);
+                if (key.equals(startState))
+                    System.out.print("->" + key + "-> ");
+                else if (!Collections.disjoint(F, keySet)) // check for common elm
+                    System.out.print(" *" + key + "-> ");
+                else
+                    System.out.print("  " + key + "-> ");
                 System.out.print(key + " -> ");
                 System.out.println(value);
             }
@@ -141,6 +149,7 @@ public class Automata {
             nextStates = removeExecutedStates(nextStates);
         }
         printDFA(DFA);
+        executedList.clear();
     }
 
     // All functions for DFA construction
@@ -188,16 +197,6 @@ public class Automata {
         return NewStateValues;
     }
 
-    private void printDFA(HashMap<Set<String>, ArrayList<HashMap<String, Set<String>>>> DFA) {
-        System.out.println(" ");
-        for (Map.Entry<Set<String>, ArrayList<HashMap<String, Set<String>>>> entry : DFA.entrySet()) {
-            Set<String> key = entry.getKey();
-            Object value = entry.getValue();
-            System.out.print(key + " -> ");
-            System.out.println(value);
-        }
-    }
-
     private ArrayList<Set<String>> removeExecutedStates(ArrayList<Set<String>> statesList) {
         ArrayList<Set<String>> newList = new ArrayList<>();
         for (Set<String> element : statesList)
@@ -207,5 +206,28 @@ public class Automata {
                 newList.add(element);
             }
         return newList;
+    }
+
+    private void printDFA(HashMap<Set<String>, ArrayList<HashMap<String, Set<String>>>> DFA) {
+        System.out.println(" ");
+
+        Set<String> startStateSet = new HashSet<>();
+        startStateSet.add(startState);
+
+        for (Map.Entry<Set<String>, ArrayList<HashMap<String, Set<String>>>> entry : DFA.entrySet()) {
+
+            Set<String> key = entry.getKey();
+            Object value = entry.getValue();
+
+            if (key.equals(startStateSet))
+                System.out.print("->" + key + "-> ");
+            else if (!Collections.disjoint(F, key)) // check for common elm
+                System.out.print(" *" + key + "-> ");
+             else
+                System.out.print("  " + key + "-> ");
+
+
+            System.out.println(value);
+        }
     }
 }
