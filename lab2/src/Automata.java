@@ -17,43 +17,44 @@ public class Automata {
     }
 
     private void addQ() {
-//        System.out.println("Add values of Q this format: Q = q1 q2 q3 ");
-//        System.out.print("Q = ");
-//
-//        String[] splitScannedStr = scanAndSplit(" ");
-//        Collections.addAll(Q, splitScannedStr);
+        System.out.println("Add values of Q this format: Q = q1 q2 q3 ");
+        System.out.print("Q = ");
 
-        Q.add("q0");
-        Q.add("q1");
-        Q.add("q2");
-        Q.add("q3");
-        Q.add("q4");
+        String[] splitScannedStr = scanAndSplit(" ");
+        Collections.addAll(Q, splitScannedStr);
+
+//        Q.add("q0");
+//        Q.add("q1");
+//        Q.add("q2");
+//        Q.add("q3");
+//        Q.add("q4");
     }
 
     private void addF() {
-//        System.out.println("Add values of the Final States in format: F = q1 q2");
-//        System.out.print("F = ");
-//
-//        String[] splitScannedStr = scanAndSplit(" ");
-//
-//        for (String element : splitScannedStr)
-//            if (Q.contains(element)) {
-//                F.add(element);
-//            } else {
-//                System.out.println("Error: Final state should be a part of Q");
-//            }
-        F.add("q3");
-        F.add("q4");
+        System.out.println("Add values of the Final States in format: F = q1 q2");
+        System.out.print("F = ");
+
+        String[] splitScannedStr = scanAndSplit(" ");
+
+        for (String element : splitScannedStr)
+            if (Q.contains(element)) {
+                F.add(element);
+            } else {
+                System.out.println("Error: Final state should be a part of Q");
+                addF();
+            }
+//        F.add("q3");
+//        F.add("q4");
     }
 
     private void addAlphabet() {
-//        System.out.println("Add values of the alphabet this format: Alph = a b ");
-//        System.out.print("Alph = ");
-//
-//        String[] splitScannedStr = scanAndSplit(" ");
-//        Collections.addAll(Alphabet, splitScannedStr);
-        Alphabet.add("a");
-        Alphabet.add("b");
+        System.out.println("Add values of the alphabet this format: Alph = a b ");
+        System.out.print("Alph = ");
+
+        String[] splitScannedStr = scanAndSplit(" ");
+        Collections.addAll(Alphabet, splitScannedStr);
+//        Alphabet.add("a");
+//        Alphabet.add("b");
     }
 
     private boolean verifyInput(String Node1, String Node2, String transitionVariable) {
@@ -65,7 +66,7 @@ public class Automata {
     private void addTransactions() {
         String scannedStr = null;
         System.out.println("Add transactions in this format: \n\tq1,a=q2 \n\tq2,b=q2 ");
-        System.out.print("Transactions = ");
+        System.out.println("Transactions = ");
 
         while (!(scannedStr = scanner.nextLine()).isEmpty()) {
             String[] splitByEqual = scannedStr.split("=");
@@ -76,9 +77,9 @@ public class Automata {
             String Node2 = splitByEqual[splitByEqual.length - 1];
 
             if (verifyInput(Node1, Node2, transitionVariable)) {
-                Set<String> newSet = new HashSet<String>();
-                HashMap<String, Set<String>> newHashMap = new HashMap<>();
                 ArrayList<HashMap<String, Set<String>>> value = new ArrayList<>();
+                HashMap<String, Set<String>> newHashMap = new HashMap<>();
+                Set<String> newSet = new HashSet<String>();
 
                 if (!Transactions.containsKey(Node1)) {
                     newSet.add(Node2);
@@ -97,15 +98,26 @@ public class Automata {
                             element.put(transitionVariable, newSet);
                         }
                 }
-            } else
+            } else {
                 System.out.println("Error, alphabet or q do not match");
+                return;
+            }
         }
     }
 
     public void inputAutomata() {
         addQ();
-//        System.out.println("State the start q: ");
-//        startState = scanner.nextLine();
+
+        System.out.print("State the start q: \nq = ");
+        String state = scanner.nextLine();
+
+        while(!Q.contains(state)){
+            System.out.println("Error: Start state should be a part of Q");
+            System.out.print("State the start q: \nq = ");
+            state = scanner.nextLine();
+        }
+        startState = state;
+
         addF();
         addAlphabet();
         addTransactions();
@@ -124,7 +136,6 @@ public class Automata {
                     System.out.print(" *" + key + "-> ");
                 else
                     System.out.print("  " + key + "-> ");
-                System.out.print(key + " -> ");
                 System.out.println(value);
             }
         }
@@ -223,7 +234,7 @@ public class Automata {
                 System.out.print("->" + key + "-> ");
             else if (!Collections.disjoint(F, key)) // check for common elm
                 System.out.print(" *" + key + "-> ");
-             else
+            else
                 System.out.print("  " + key + "-> ");
 
 
