@@ -10,7 +10,7 @@ public class Main {
     public static void main(String[] args) throws FileNotFoundException {
         List<Token> tokens = new ArrayList<>();
 
-        Scanner scanner = new Scanner(new File("C:\\Users\\valeria\\Desktop\\Uni\\LFPC\\LFPC_labs\\lab3(own language)\\src\\Program.txt"));
+        Scanner scanner = new Scanner(new File("C:\\Users\\valeria\\Desktop\\Uni\\LFPC\\LFPC_labs\\lab3_own_language\\src\\Program.txt"));
         while (scanner.hasNextLine()) {
             String line = scanner.nextLine();
             Lexer lexer = new Lexer(line);
