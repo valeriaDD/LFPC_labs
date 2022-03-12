@@ -10,8 +10,7 @@ public enum TokenType {
     SLASH,      // /
     STAR,       // *
     EQ,         // =
-    QUOTE,      // '
-    MQUOTE,     // "
+    D_QUOTE,     // "
     GREATER,    // >
     SMALLER,    // <
     COMMA,      // ,

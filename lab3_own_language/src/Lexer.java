@@ -7,16 +7,15 @@ public class Lexer {
     private final String input;
     private final int length;
     private final List<Token> tokens;
-    private final String CHAR_OPERATION_REPRESENTATION = "+-/*(){}='\"><,.";
+    private final String CHAR_OPERATION_REPRESENTATION = "+-/*(){}=\"><,.";
     private final TokenType[] TOKEN_OPERATORS = {
             TokenType.PLUS, TokenType.MINUS,
             TokenType.STAR, TokenType.SLASH,
             TokenType.LPAREN, TokenType.RPAREN,
             TokenType.LBRACE, TokenType.RBRACE,
-            TokenType.EQ, TokenType.QUOTE,
-            TokenType.MQUOTE, TokenType.GREATER,
-            TokenType.SMALLER, TokenType.COMMA,
-            TokenType.DOT
+            TokenType.EQ, TokenType.D_QUOTE,
+            TokenType.GREATER, TokenType.SMALLER,
+            TokenType.COMMA, TokenType.DOT
     };
     private int pos;
 
