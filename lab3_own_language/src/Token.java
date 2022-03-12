@@ -16,15 +16,15 @@ public class Token {
         this.text = text;
     }
 
-    public void setType(TokenType type) {
-        this.type = type;
-    }
-
     public TokenType getType() {
         return type;
     }
 
-    public String display(){
+    public void setType(TokenType type) {
+        this.type = type;
+    }
+
+    public String display() {
         return type + " " + text;
     }
 }

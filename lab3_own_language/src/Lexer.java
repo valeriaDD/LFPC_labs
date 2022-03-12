@@ -1,13 +1,12 @@
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 public class Lexer {
 
     private final String input;
     private final int length;
     private final List<Token> tokens;
-    private int pos;
-
     private final String CHAR_OPERATION_REPRESENTATION = "+-/*(){}='\"><,.";
     private final TokenType[] TOKEN_OPERATORS = {
             TokenType.PLUS, TokenType.MINUS,
@@ -19,6 +18,7 @@ public class Lexer {
             TokenType.SMALLER, TokenType.COMMA,
             TokenType.DOT
     };
+    private int pos;
 
     public Lexer(String input) {
         this.input = input;
@@ -93,6 +93,8 @@ public class Lexer {
                 break;
             case "return":
                 addToken(TokenType.RETURN, word);
+            case "for":
+                addToken(TokenType.FOR, word);
             default:
                 addToken(TokenType.WORD, buffer.toString());
                 break;
@@ -122,7 +124,19 @@ public class Lexer {
     private void tokenizeOperator() {
         int position = CHAR_OPERATION_REPRESENTATION.indexOf(peek(0));
         String representation = Character.toString(CHAR_OPERATION_REPRESENTATION.charAt(position));
-        addToken(TOKEN_OPERATORS[position], representation);
+
+        if (representation.equals("\"")) {
+            next();
+            StringBuffer buffer = new StringBuffer();
+            char current = peek(0);
+
+            while (!Objects.equals(current, '\"')) {
+                buffer.append(current);
+                current = next();
+            }
+            addToken(TokenType.STRING, buffer.toString());
+        } else
+            addToken(TOKEN_OPERATORS[position], representation);
         next();
     }
 

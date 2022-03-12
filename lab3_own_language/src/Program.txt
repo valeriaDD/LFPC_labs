@@ -4,6 +4,7 @@ main function(){
     while(counter <= 5 ){
         stamp(counter)
         increment(counter)
+        a = "buna ziua"
         }
 }
 

@@ -1,8 +1,9 @@
 public enum TokenType {
 
     NUMBER,     // integers or floats
-    WORD,       // strings or chars [firs character is char] can include "_" symbol only
+    WORD,       // Identifier can include "_" symbol only
     BOOLEAN,    // true or false
+    STRING,     // strings or chars [firs character is char]
 
     PLUS,       // +
     MINUS,      // -
@@ -23,6 +24,7 @@ public enum TokenType {
     IF,
     ELSE,
     WHILE,
+    FOR,
     MAIN,       // main function declaration
     FUNCTION,   // function declaration
     AND,        // logic and
