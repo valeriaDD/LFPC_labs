@@ -7,6 +7,7 @@ public class Lexer {
     private final String input;
     private final int length;
     private final List<Token> tokens;
+    private int pos;
     private final String CHAR_OPERATION_REPRESENTATION = "+-/*(){}=\"><,.";
     private final TokenType[] TOKEN_OPERATORS = {
             TokenType.PLUS, TokenType.MINUS,
@@ -17,7 +18,6 @@ public class Lexer {
             TokenType.GREATER, TokenType.SMALLER,
             TokenType.COMMA, TokenType.DOT
     };
-    private int pos;
 
     public Lexer(String input) {
         this.input = input;
@@ -92,8 +92,10 @@ public class Lexer {
                 break;
             case "return":
                 addToken(TokenType.RETURN, word);
+                break;
             case "for":
                 addToken(TokenType.FOR, word);
+                break;
             default:
                 addToken(TokenType.WORD, buffer.toString());
                 break;

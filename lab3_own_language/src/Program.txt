@@ -1,12 +1,4 @@
 
-main function(){
-    say counter = 0
-    while(counter <= 5 ){
-        stamp(counter)
-        increment(counter)
-        a = "buna ziua"
-        }
-}
 
 function increment(say number){
     return number += 1
