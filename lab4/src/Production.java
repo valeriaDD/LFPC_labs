@@ -24,8 +24,12 @@ public class Production {
         this.derivations.remove(derivationToRemove);
     }
 
-    public void addDerivation(String derivationToAdd){
+    public void addDerivation(String derivationToAdd) {
         this.derivations.add(derivationToAdd);
+    }
+
+    public void display() {
+        System.out.println(this.getNonTerminal() + "->" + this.getDerivations());
     }
 
 }

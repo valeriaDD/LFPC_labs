@@ -6,10 +6,9 @@ public class ScanGrammar {
     public String terminals;
     public String nonTerminals;
     public ArrayList<String> Productions = new ArrayList<>();
-    Grammar grammar = new Grammar();
 
-    public ScanGrammar() throws FileNotFoundException {
-        Scanner scanner = new Scanner(new File("C:\\Users\\valeria\\Desktop\\Uni\\LFPC\\lab4\\src\\grammar.txt"));
+    public ScanGrammar(Grammar grammar, String path) throws FileNotFoundException {
+        Scanner scanner = new Scanner(new File(path));
 
         terminals = scanner.nextLine();
         nonTerminals = scanner.nextLine();
@@ -18,22 +17,22 @@ public class ScanGrammar {
             Productions.add(scanner.nextLine());
         }
 
-        splitTerminals();
-        splitNonTerminals();
-        splitProductions();
+        splitTerminals(grammar);
+        splitNonTerminals(grammar);
+        splitProductions(grammar);
     }
 
-    private void splitTerminals() {
+    private void splitTerminals(Grammar grammar) {
         Set<String> setTerminals = new HashSet<>(Arrays.asList(terminals.split(",")));
         grammar.setTerminals(setTerminals);
     }
 
-    private void splitNonTerminals() {
+    private void splitNonTerminals(Grammar grammar) {
         Set<String> setNonTerminals = new HashSet<>(Arrays.asList(nonTerminals.split(",")));
         grammar.setNonTerminals(setNonTerminals);
     }
 
-    private void splitProductions() {
+    private void splitProductions(Grammar grammar) {
         for (String derivation : Productions) {
             Production production = new Production();
 

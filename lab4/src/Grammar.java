@@ -49,4 +49,10 @@ public class Grammar {
     public void addProductions(Production production) {
         this.productions.add(production);
     }
+
+    public void display(){
+        for (Production production: this.productions) {
+            production.display();
+        }
+    }
 }
