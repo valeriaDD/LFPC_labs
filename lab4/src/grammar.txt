@@ -1,0 +1,7 @@
+S,A,B,C,D
+a,b
+S->AC|bA|B|aA
+A->-|aS|ABAb
+B->a|AbSA
+C->abC
+D->AB
