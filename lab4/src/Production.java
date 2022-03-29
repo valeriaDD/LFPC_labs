@@ -1,4 +1,6 @@
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 import static java.util.stream.Collectors.toSet;
@@ -51,11 +53,11 @@ public class Production {
         return this.derivations.size() == 1 && this.derivations.contains("-");
     }
 
-    public boolean hasProduction(String nonTerminal) {
+    public boolean hasOnlyProduction(String nonTerminal) {
         return this.derivations.size() == 1 && this.derivations.contains(nonTerminal);
     }
 
-    public boolean hasOnlyProduction(String nonTerminal) {
+    public boolean hasProduction(String nonTerminal) {
         for (String word : this.derivations)
             if (word.contains(nonTerminal))
                 return true;
@@ -93,7 +95,7 @@ public class Production {
 
     public void filterStates(Set<String> newProductions, String emptyProduction, String word) {
         Set<String> toRemove = new HashSet<>();
-        Set<Character> nonEmptyCharacters = new HashSet<>();
+        List<Character> nonEmptyCharacters = new ArrayList<Character>();
         StringBuilder bufferedWord = new StringBuilder(word);
 
         // Find all nonEmpty states contained in the word
@@ -102,14 +104,18 @@ public class Production {
                 nonEmptyCharacters.add(bufferedWord.charAt(i));
 
         // Add to "toRemove" Set Words that do not contain all nonEmpty states from a word
-        for (String newProduction : newProductions) {
+        for (String newProductionWord : newProductions) {
+            StringBuilder newProductionWordCopy = new StringBuilder(newProductionWord);
             int counter = 0;
-            for (Character nonEmpty : nonEmptyCharacters) {
-                if (newProduction.contains(nonEmpty.toString()))
+
+            for (Character nonEmpty : nonEmptyCharacters)
+                if (newProductionWordCopy.indexOf(nonEmpty.toString()) != -1){
+                    newProductionWordCopy.deleteCharAt(newProductionWordCopy.indexOf(nonEmpty.toString()));
                     counter++;
-            }
+                }
+
             if (counter != nonEmptyCharacters.size())
-                toRemove.add(newProduction);
+                toRemove.add(newProductionWord);
         }
 
         // Remove unneeded productions and concat derivations

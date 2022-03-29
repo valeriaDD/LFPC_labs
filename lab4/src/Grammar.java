@@ -10,6 +10,9 @@ public class Grammar {
     private List<Production> productions = new ArrayList<>();
 
     public void convertToChomskyNormalForm() {
+        System.out.println("\n\t\t\tInput:");
+        display();
+
         removeEmptyTransitions();
         removeUnitTransitions();
         removeUnproductiveSymbols();
