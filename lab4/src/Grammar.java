@@ -9,6 +9,51 @@ public class Grammar {
     private String startSymbol;
     private List<Production> productions = new ArrayList<>();
 
+    public void convertToChomskyNormalForm() {
+        removeEmptyTransitions();
+        removeUnitTransitions();
+        removeUnproductiveSymbols();
+        removeInaccessibleSymbols();
+    }
+
+    private void removeInaccessibleSymbols() {
+    }
+
+    private void removeUnproductiveSymbols() {
+    }
+
+    private void removeUnitTransitions() {
+    }
+
+    private void removeEmptyTransitions() {
+        Set<String> emptyProductions = findEmptyStates();
+        while (!emptyProductions.isEmpty()) {
+            String emptyProduction = emptyProductions.iterator().next();
+
+            for (Production production : productions)
+                if (production.hasProduction(emptyProduction)) {
+                    production.eliminateEmptyState(emptyProduction);
+                }
+            emptyProductions.remove(emptyProduction);
+        }
+        System.out.println("-------------------------------------------------");
+        System.out.println("Grammar after elimination of empty transitions:");
+        System.out.println("-------------------------------------------------");
+
+        display();
+    }
+
+    public Set<String> findEmptyStates() {
+        Set<String> nullTransitions = new HashSet<>();
+
+        for (Production production : this.productions)
+            if (production.hasEmptyTransition())
+                nullTransitions.add(production.getNonTerminal());
+
+        return nullTransitions;
+    }
+
+
     public List<Production> getProductions() {
         return productions;
     }
@@ -17,7 +62,7 @@ public class Grammar {
         this.productions = productions;
     }
 
-    public List<Production> removeProduction(Production productionToRemove){
+    public List<Production> removeProduction(Production productionToRemove) {
         productions.remove(productionToRemove);
         return productions;
     }
@@ -50,8 +95,8 @@ public class Grammar {
         this.productions.add(production);
     }
 
-    public void display(){
-        for (Production production: this.productions) {
+    public void display() {
+        for (Production production : this.productions) {
             production.display();
         }
     }

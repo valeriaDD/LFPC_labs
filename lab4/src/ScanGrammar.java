@@ -38,7 +38,7 @@ public class ScanGrammar {
 
             String[] splitByArrow = derivation.split("->");
             String[] splitByBar = splitByArrow[1].split("\\|");
-            List<String> splitByBarList = new ArrayList<>(Arrays.asList(splitByBar));
+            Set<String> splitByBarList = new HashSet<>(Arrays.asList(splitByBar));
 
             production.setNonTerminal(splitByArrow[0]);
             production.setDerivations(splitByBarList);
