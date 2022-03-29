@@ -52,6 +52,10 @@ public class Production {
     }
 
     public boolean hasProduction(String nonTerminal) {
+        return this.derivations.size() == 1 && this.derivations.contains(nonTerminal);
+    }
+
+    public boolean hasOnlyProduction(String nonTerminal) {
         for (String word : this.derivations)
             if (word.contains(nonTerminal))
                 return true;

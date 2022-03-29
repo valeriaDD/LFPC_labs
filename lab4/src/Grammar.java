@@ -23,7 +23,28 @@ public class Grammar {
     }
 
     private void removeUnitTransitions() {
+        for (Production production: productions)
+            for (String nonTerminal: nonTerminals)
+                if (production.hasOnlyProduction(nonTerminal)){
+                    production.getDerivations().remove(nonTerminal);
+                    production.getDerivations().addAll(getProductionsOf(nonTerminal));
+                }
+
+        System.out.println("\n\t\t\tGrammar after elimination of unit productions:");
+        display();
+
     }
+
+    private Set<String> getProductionsOf(String nonTerminal){
+        Set<String > toAdd = new HashSet<>();
+
+        for (Production production: productions)
+            if (production.getNonTerminal().equals(nonTerminal))
+                toAdd.addAll(production.getDerivations());
+
+        return toAdd;
+    }
+
 //  ***** Elimination of empty productions functions *****
     private void removeEmptyTransitions() {
         Set<String> emptyProductions = findEmptyStates();

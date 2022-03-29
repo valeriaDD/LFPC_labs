@@ -1,6 +1,4 @@
 a,b
 S,A,B,C,D
-S->CCCCCCEDCDC|ACd
-A->aA|-
-B->bB|-
-C->-
+S->CCCCCCEDCDC|A
+A->aA
