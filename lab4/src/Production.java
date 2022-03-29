@@ -39,11 +39,16 @@ public class Production {
         System.out.println(this.getNonTerminal() + "->" + this.getDerivations());
     }
 
+    //  ***** Elimination of empty productions functions *****
     public boolean hasEmptyTransition() {
         for (String word : this.derivations)
             if (word.contains("-"))
                 return true;
         return false;
+    }
+
+    public boolean hasOnlyEmptyTransition() {
+        return this.derivations.size() == 1 && this.derivations.contains("-");
     }
 
     public boolean hasProduction(String nonTerminal) {
@@ -109,4 +114,22 @@ public class Production {
                 .collect(toSet());
         this.derivations.remove("-");
     }
+
+    public void deleteAll(String nonTerminal) {
+        Set<String> toRemove = new HashSet<>();
+        Set<String> toAdd = new HashSet<>();
+
+        for (String word: this.derivations) {
+            StringBuffer bufferedWord = new StringBuffer(word);
+
+            while(bufferedWord.indexOf(nonTerminal) != -1){
+                toRemove.add(word);
+                bufferedWord.deleteCharAt(bufferedWord.indexOf(nonTerminal));
+            }
+            toAdd.add(bufferedWord.toString());
+        }
+        this.derivations.removeAll(toRemove);
+        this.derivations.addAll(toAdd);
+    }
+//  ***** END  of Elimination of empty productions functions *****
 }

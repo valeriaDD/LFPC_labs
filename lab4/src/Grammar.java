@@ -24,7 +24,7 @@ public class Grammar {
 
     private void removeUnitTransitions() {
     }
-
+//  ***** Elimination of empty productions functions *****
     private void removeEmptyTransitions() {
         Set<String> emptyProductions = findEmptyStates();
         while (!emptyProductions.isEmpty()) {
@@ -36,22 +36,38 @@ public class Grammar {
                 }
             emptyProductions.remove(emptyProduction);
         }
-        System.out.println("-------------------------------------------------");
-        System.out.println("Grammar after elimination of empty transitions:");
-        System.out.println("-------------------------------------------------");
 
+        System.out.println("\n\t\t\tGrammar after elimination of empty transitions:");
         display();
     }
 
     public Set<String> findEmptyStates() {
         Set<String> nullTransitions = new HashSet<>();
+        Set<Production> productionsToRemove = new HashSet<>();
 
-        for (Production production : this.productions)
-            if (production.hasEmptyTransition())
+        for (Production production : this.productions) {
+            if (production.hasOnlyEmptyTransition()){
+                productionsToRemove.add(production);
+                removeEverywhere(production);
+            }
+            else if (production.hasEmptyTransition())
                 nullTransitions.add(production.getNonTerminal());
+        }
+        this.productions.removeAll(productionsToRemove);
 
         return nullTransitions;
     }
+
+    private void removeEverywhere(Production onlyEmpty){
+        this.nonTerminals.remove(onlyEmpty.getNonTerminal());
+
+        for (Production production: this.productions){
+            if(production.hasProduction(onlyEmpty.getNonTerminal())){
+                production.deleteAll(onlyEmpty.getNonTerminal());
+            }
+        }
+    }
+//  ***** END of Elimination of empty productions functions *****
 
 
     public List<Production> getProductions() {
