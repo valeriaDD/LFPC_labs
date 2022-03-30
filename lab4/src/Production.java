@@ -13,6 +13,15 @@ public class Production {
 
     private StringBuffer combinations = new StringBuffer();
 
+    public static String removeDuplicateCharacters(String word) {
+        final StringBuilder output = new StringBuilder();
+        for (int i = 0; i < word.length(); i++) {
+            String character = word.substring(i, i + 1);
+            if (output.indexOf(character) < 0)
+                output.append(character);
+        }
+        return output.toString();
+    }
 
     public String getNonTerminal() {
         return nonTerminal;
@@ -102,7 +111,7 @@ public class Production {
             int counter = 0;
 
             for (Character nonEmpty : nonEmptyCharacters)
-                if (newProductionWordCopy.indexOf(nonEmpty.toString()) != -1){
+                if (newProductionWordCopy.indexOf(nonEmpty.toString()) != -1) {
                     newProductionWordCopy.deleteCharAt(newProductionWordCopy.indexOf(nonEmpty.toString()));
                     counter++;
                 }
@@ -122,10 +131,10 @@ public class Production {
         Set<String> toRemove = new HashSet<>();
         Set<String> toAdd = new HashSet<>();
 
-        for (String word: this.derivations) {
+        for (String word : this.derivations) {
             StringBuffer bufferedWord = new StringBuffer(word);
 
-            while(bufferedWord.indexOf(nonTerminal) != -1){
+            while (bufferedWord.indexOf(nonTerminal) != -1) {
                 toRemove.add(word);
                 bufferedWord.deleteCharAt(bufferedWord.indexOf(nonTerminal));
             }
@@ -153,5 +162,38 @@ public class Production {
         this.derivations.removeAll(toRemove);
         this.derivations.addAll(toAdd);
     }
+
+    public boolean containsTerminal() {
+        String regex = "[a-z]";
+        for (String word : this.derivations) {
+            if (word.matches(regex))
+                return true;
+        }
+        return false;
+    }
+
+    public boolean hasProductiveStates(Set<String> productiveSet) {
+
+        for (String word : this.derivations) {
+            StringBuilder bufferedWord = new StringBuilder(removeDuplicateCharacters(word));
+
+            for (String productiveProduction : productiveSet) {
+                for (int i = 0; i < bufferedWord.length(); i++) {
+                    char ch = bufferedWord.charAt(i);
+
+                    if (Character.isLowerCase(ch)) {
+                        bufferedWord.deleteCharAt(i);
+                    } else if (Character.toString(ch).equals(productiveProduction)) {
+                        bufferedWord.deleteCharAt(i);
+                    }
+                }
+            }
+            if (bufferedWord.isEmpty())
+                return true;
+        }
+        return false;
+    }
+
+
 //  ***** END  of Elimination of empty productions functions *****
 }
