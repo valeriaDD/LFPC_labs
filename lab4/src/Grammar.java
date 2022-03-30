@@ -1,12 +1,8 @@
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 public class Grammar {
     private Set<String> terminals = new HashSet<>();
     private Set<String> nonTerminals = new HashSet<>();
-    private String startSymbol;
     private List<Production> productions = new ArrayList<>();
 
     public void convertToChomskyNormalForm() {
@@ -26,13 +22,28 @@ public class Grammar {
     }
 
     private void removeUnitTransitions() {
-        for (Production production: productions)
-            for (String nonTerminal: nonTerminals)
-                if (production.hasOnlyProduction(nonTerminal)){
+        HashMap<String, String> toReplace = new HashMap<>();
+        Set<Production> toRemove = new HashSet<>();
+
+        for (Production production : productions)
+            for (String nonTerminal : nonTerminals)
+                if (production.hasOnlyOneProduction(nonTerminal)) {
+                    toReplace.put(production.getNonTerminal(), nonTerminal);
+                    toRemove.add(production);
+
+                } else if (production.hasOnlyProduction(nonTerminal)) {
                     production.getDerivations().remove(nonTerminal);
                     production.getDerivations().addAll(getProductionsOf(nonTerminal));
                 }
 
+        for (Map.Entry<String, String> set : toReplace.entrySet()) {
+            for (Production production : this.productions)
+                if (production.hasProduction(set.getKey())) {
+                    production.replaceThings(set.getKey(), set.getValue());
+                }
+        }
+
+        this.productions.removeAll(toRemove);
         System.out.println("\n\t\t\tGrammar after elimination of unit productions:");
         display();
 
@@ -95,42 +106,13 @@ public class Grammar {
     }
 //  ***** END of Elimination of empty productions functions *****
 
-
-    public List<Production> getProductions() {
-        return productions;
-    }
-
-    public void setProductions(List<Production> productions) {
-        this.productions = productions;
-    }
-
-    public List<Production> removeProduction(Production productionToRemove) {
-        productions.remove(productionToRemove);
-        return productions;
-    }
-
-    public Set<String> getTerminals() {
-        return terminals;
-    }
-
     public void setTerminals(Set<String> terminals) {
         this.terminals = terminals;
     }
 
-    public Set<String> getNonTerminals() {
-        return nonTerminals;
-    }
 
     public void setNonTerminals(Set<String> nonTerminals) {
         this.nonTerminals = nonTerminals;
-    }
-
-    public String getStartSymbol() {
-        return startSymbol;
-    }
-
-    public void setStartSymbol(String startSymbol) {
-        this.startSymbol = startSymbol;
     }
 
     public void addProductions(Production production) {

@@ -1,8 +1,8 @@
 a,b
 S,A,B,C,E
 S->bAC|B
-A->a|aS|bCaCbFFFF
+A->C
 B->AC|bS|aAa
-C->AB|-
+C->CB|-
 E->BA
 F->-
