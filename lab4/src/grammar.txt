@@ -1,5 +1,8 @@
 a,b
-S,A,B,C,D
-S->CCEDDA
-A->aA|-
-C->-
+S,A,B,C,E
+S->bAC|B
+A->a|aS|bCaCbFF
+B->AC|bS|aAa|C
+C->AB|-
+E->BA|F
+F->-

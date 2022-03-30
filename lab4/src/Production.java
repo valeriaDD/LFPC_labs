@@ -2,6 +2,7 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.regex.Pattern;
 
 import static java.util.stream.Collectors.toSet;
 import static java.util.stream.Stream.concat;
@@ -49,12 +50,15 @@ public class Production {
         return false;
     }
 
-    public boolean hasOnlyEmptyTransition() {
-        return this.derivations.size() == 1 && this.derivations.contains("-");
+    public boolean hasOnlyOneProduction(String nonTerminal) {
+        return this.derivations.size() == 1 && this.derivations.contains(nonTerminal);
     }
 
     public boolean hasOnlyProduction(String nonTerminal) {
-        return this.derivations.size() == 1 && this.derivations.contains(nonTerminal);
+        for (String word : this.derivations)
+            if (word.contains(nonTerminal) && word.length() == 1)
+                return true;
+        return false;
     }
 
     public boolean hasProduction(String nonTerminal) {
@@ -109,7 +113,7 @@ public class Production {
             int counter = 0;
 
             for (Character nonEmpty : nonEmptyCharacters)
-                if (newProductionWordCopy.indexOf(nonEmpty.toString()) != -1){
+                if (newProductionWordCopy.indexOf(nonEmpty.toString()) != -1) {
                     newProductionWordCopy.deleteCharAt(newProductionWordCopy.indexOf(nonEmpty.toString()));
                     counter++;
                 }
@@ -129,10 +133,10 @@ public class Production {
         Set<String> toRemove = new HashSet<>();
         Set<String> toAdd = new HashSet<>();
 
-        for (String word: this.derivations) {
+        for (String word : this.derivations) {
             StringBuffer bufferedWord = new StringBuffer(word);
 
-            while(bufferedWord.indexOf(nonTerminal) != -1){
+            while (bufferedWord.indexOf(nonTerminal) != -1) {
                 toRemove.add(word);
                 bufferedWord.deleteCharAt(bufferedWord.indexOf(nonTerminal));
             }
@@ -142,4 +146,28 @@ public class Production {
         this.derivations.addAll(toAdd);
     }
 //  ***** END  of Elimination of empty productions functions *****
+
+    public boolean containsTerminal() {
+        String regex = "[a-z]";
+        for (String word : this.derivations) {
+            if (word.matches(regex))
+                return true;
+        }
+        return false;
+    }
+
+    public void replaceThings(String characterToReplace, String replacementCharacter) {
+        Set<String> toRemove = new HashSet<>();
+        Set<String> toAdd = new HashSet<>();
+
+        for (String word : this.derivations)
+            if (word.contains(characterToReplace)) {
+                toRemove.add(word);
+                String replacementWord = Pattern.compile(characterToReplace).matcher(word).replaceAll(replacementCharacter);
+                toAdd.add(replacementWord);
+            }
+
+        this.derivations.removeAll(toRemove);
+        this.derivations.addAll(toAdd);
+    }
 }

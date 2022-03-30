@@ -1,7 +1,4 @@
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 public class Grammar {
     private Set<String> terminals = new HashSet<>();
@@ -15,7 +12,7 @@ public class Grammar {
 
         removeEmptyTransitions();
         removeUnitTransitions();
-        removeUnproductiveSymbols();
+//        removeUnproductiveSymbols();
         removeInaccessibleSymbols();
     }
 
@@ -23,42 +20,72 @@ public class Grammar {
     }
 
     private void removeUnproductiveSymbols() {
+        Set<String> productive = new HashSet<>();
+
+        for (Production production : productions) {
+            if (production.containsTerminal()) // All terminals should be lowercase for it to work
+                productive.add(production.getNonTerminal());
+        }
+
+        System.out.println("Productive " + productive);
+
     }
 
     private void removeUnitTransitions() {
-        for (Production production: productions)
-            for (String nonTerminal: nonTerminals)
-                if (production.hasOnlyProduction(nonTerminal)){
+        HashMap<String, String> toReplace = new HashMap<>();
+        Set<Production> toRemove = new HashSet<>();
+
+        for (Production production : productions)
+            for (String nonTerminal : nonTerminals)
+                if (production.hasOnlyOneProduction(nonTerminal)) {
+                    toReplace.put(production.getNonTerminal(), nonTerminal);
+                    toRemove.add(production);
+
+                } else if (production.hasOnlyProduction(nonTerminal)) {
                     production.getDerivations().remove(nonTerminal);
                     production.getDerivations().addAll(getProductionsOf(nonTerminal));
                 }
 
+        for (Map.Entry<String, String> set : toReplace.entrySet()) {
+            for (Production production : this.productions)
+                if (production.hasProduction(set.getKey())) {
+                    production.replaceThings(set.getKey(), set.getValue());
+                }
+        }
+
+        this.productions.removeAll(toRemove);
         System.out.println("\n\t\t\tGrammar after elimination of unit productions:");
         display();
 
     }
 
-    private Set<String> getProductionsOf(String nonTerminal){
-        Set<String > toAdd = new HashSet<>();
+    private Set<String> getProductionsOf(String nonTerminal) {
+        Set<String> toAdd = new HashSet<>();
 
-        for (Production production: productions)
+        for (Production production : productions)
             if (production.getNonTerminal().equals(nonTerminal))
                 toAdd.addAll(production.getDerivations());
 
         return toAdd;
     }
 
-//  ***** Elimination of empty productions functions *****
+    //  ***** Elimination of empty productions functions *****
     private void removeEmptyTransitions() {
         Set<String> emptyProductions = findEmptyStates();
+
         while (!emptyProductions.isEmpty()) {
             String emptyProduction = emptyProductions.iterator().next();
 
-            for (Production production : productions)
+            for (Production production : productions) {
                 if (production.hasProduction(emptyProduction)) {
                     production.eliminateEmptyState(emptyProduction);
                 }
+//                if (production.hasProduction("-")) {
+//                        production.getDerivations().remove("-");
+//                }
+            }
             emptyProductions.remove(emptyProduction);
+//            emptyProductions.addAll(findEmptyStates());
         }
 
         System.out.println("\n\t\t\tGrammar after elimination of empty transitions:");
@@ -70,23 +97,23 @@ public class Grammar {
         Set<Production> productionsToRemove = new HashSet<>();
 
         for (Production production : this.productions) {
-            if (production.hasOnlyEmptyTransition()){
+//             if (production.hasEmptyTransition())
+//                nullTransitions.add(production.getNonTerminal());
+            if (production.hasOnlyProduction("-")) {
                 productionsToRemove.add(production);
                 removeEverywhere(production);
             }
-            else if (production.hasEmptyTransition())
-                nullTransitions.add(production.getNonTerminal());
         }
         this.productions.removeAll(productionsToRemove);
 
         return nullTransitions;
     }
 
-    private void removeEverywhere(Production onlyEmpty){
+    private void removeEverywhere(Production onlyEmpty) {
         this.nonTerminals.remove(onlyEmpty.getNonTerminal());
 
-        for (Production production: this.productions){
-            if(production.hasProduction(onlyEmpty.getNonTerminal())){
+        for (Production production : this.productions) {
+            if (production.hasProduction(onlyEmpty.getNonTerminal())) {
                 production.deleteAll(onlyEmpty.getNonTerminal());
             }
         }
@@ -136,6 +163,8 @@ public class Grammar {
     }
 
     public void display() {
+        System.out.println("nonterminals: " + nonTerminals);
+        System.out.println("terminals " + terminals);
         for (Production production : this.productions) {
             production.display();
         }
