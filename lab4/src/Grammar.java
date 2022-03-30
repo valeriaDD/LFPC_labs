@@ -74,8 +74,10 @@ public class Grammar {
                 productionsToRemove.add(production);
                 removeEverywhere(production);
             }
-            else if (production.hasEmptyTransition())
+            else if (production.hasEmptyTransition()) {
                 nullTransitions.add(production.getNonTerminal());
+                production.getDerivations().remove("-");
+            }
         }
         this.productions.removeAll(productionsToRemove);
 

@@ -29,14 +29,6 @@ public class Production {
         this.derivations = derivations;
     }
 
-    public void removeDerivation(String derivationToRemove) {
-        this.derivations.remove(derivationToRemove);
-    }
-
-    public void addDerivation(String derivationToAdd) {
-        this.derivations.add(derivationToAdd);
-    }
-
     public void display() {
         System.out.println(this.getNonTerminal() + "->" + this.getDerivations());
     }
@@ -69,7 +61,7 @@ public class Production {
         Set<String> toRemove = new HashSet<>();
 
         for (String word : this.derivations) {
-            if (word.length() == 1 && word.contains(emptyProduction)) {
+            if (word.length() == 1 && word.contains("-")) {
                 toRemove.add(word);
             } else {
                 newWordsSet.addAll(makeCombinations(0, word, newWordsSet));
