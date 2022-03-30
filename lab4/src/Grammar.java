@@ -4,7 +4,7 @@ import java.util.*;
 public class Grammar {
     private Set<String> terminals = new HashSet<>();
     private Set<String> nonTerminals = new HashSet<>();
-    private List<Production> productions = new ArrayList<>();
+    private final List<Production> productions = new ArrayList<>();
 
     public void convertToChomskyNormalForm() {
         System.out.println("\n\t\t\tInput:");
@@ -69,13 +69,18 @@ public class Grammar {
                 }
 
         for (Map.Entry<String, String> set : toReplace.entrySet()) {
+            this.nonTerminals.remove(set.getKey());
             for (Production production : this.productions)
                 if (production.hasProduction(set.getKey())) {
                     production.replaceThings(set.getKey(), set.getValue());
+
                 }
         }
 
         this.productions.removeAll(toRemove);
+        for (Production productionToRemove: toRemove) {
+            this.nonTerminals.remove(productionToRemove);
+        }
         System.out.println("\n\t\t\tGrammar after elimination of unit productions:");
         display();
 
