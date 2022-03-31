@@ -55,8 +55,12 @@ public class Production {
         return this.derivations.size() == 1 && this.derivations.contains("-");
     }
 
-    public boolean hasOnlyProduction(String nonTerminal) {
-        return this.derivations.size() == 1 && this.derivations.contains(nonTerminal);
+    public boolean hasUnitProduction(String nonTerminal) {
+        for (String word: this.derivations)
+            if (word.equals(nonTerminal))
+                return true;
+
+        return false;
     }
 
     public boolean hasProduction(String nonTerminal) {

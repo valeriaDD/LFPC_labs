@@ -4,4 +4,3 @@ S->dB|A
 A->d|dS|aAdAB
 B->a|aS|A|-
 C->Aa
-D->-

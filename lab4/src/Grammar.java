@@ -94,7 +94,7 @@ public class Grammar {
                     toReplace.put(production.getNonTerminal(), nonTerminal);
                     toRemove.add(production);
 
-                } else if (production.hasOnlyProduction(nonTerminal)) {
+                } else if (production.hasUnitProduction(nonTerminal)) {
                     production.getDerivations().remove(nonTerminal);
                     production.getDerivations().addAll(getDerivationsOf(nonTerminal));
                 }
