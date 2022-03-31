@@ -5,10 +5,12 @@ public class Grammar {
     private final List<Production> productions = new ArrayList<>();
     private Set<String> terminals = new HashSet<>();
     private Set<String> nonTerminals = new HashSet<>();
+    private ArrayList<String> alphabet = new ArrayList<>();
+    private int maxWordLength = 1;
+
 
     public void convertToChomskyNormalForm() {
         HashMap<String, String> toReplace = new HashMap<>();
-        ArrayList<String> alphabet = new ArrayList<>();
 
         //generates all Upper Case Letters and append them to alphabet set
         IntStream.rangeClosed('A', 'Z').mapToObj(var -> (char) var).forEach(
@@ -26,39 +28,65 @@ public class Grammar {
         removeUnproductiveSymbols();
         removeInaccessibleSymbols();
 
-        for (Production production : this.productions)
-            for (String word : production.getDerivations())
-                if (word.length() == 2) {
+        toChomskyLength2(toReplace);
+        replace(toReplace);
 
-                    StringBuilder bufferedWord = new StringBuilder(word);
-                    for (int i = 0; i < 2; i++) {
-                        char ch = bufferedWord.charAt(i);
-                        if (Character.isLowerCase(ch))
-                            if (toReplace.containsKey(Character.toString(ch)))
-                                break;
-                            else {
-                                toReplace.put(Character.toString(ch), alphabet.get(0));
+        for (int j = 0; j <= maxWordLength; j++) {
+            for (Production production : this.productions) {
+                for (String word : production.getDerivations()) {
+                    if (word.length() != 1) {
+                        for (int i = 2; i < word.length(); i += 2) {
+                            if (!toReplace.containsKey(word.substring(i - 2, i))) {
+                                toReplace.put(word.substring(i - 2, i), alphabet.get(0));
                                 alphabet.remove(0);
                             }
+                        }
+
                     }
                 }
 
-        System.out.println(toReplace);
+            }
+        }
+        replace(toReplace);
 
+        System.out.println("\n\t\t\tGrammar in Chomsky Normal Form:");
+        display();
+
+        System.out.println(toReplace);
+    }
+
+    public void replace(HashMap<String, String> toReplace) {
         for (Map.Entry<String, String> set : toReplace.entrySet()) {
             this.nonTerminals.remove(set.getKey());
             for (Production production : this.productions)
                 if (production.hasProduction(set.getKey())) {
                     production.chomskyFormatter(set.getKey(), set.getValue());
-
+                    nonTerminals.add(set.getValue());
                 }
         }
-
-        System.out.println("\n\t\t\tGrammar in Chomsky Normal Form:");
-        display();
-
-
     }
+
+    public void toChomskyLength2(HashMap<String, String> toReplace) {
+        for (Production production : this.productions)
+            for (String word : production.getDerivations()) {
+                if (maxWordLength < word.length())
+                    maxWordLength = word.length();
+                if (word.length() == 2) {
+                    StringBuilder bufferedWord = new StringBuilder(word);
+                    for (int i = 0; i < 2; i++) {
+                        char ch = bufferedWord.charAt(i);
+                        if (Character.isLowerCase(ch))
+                            if (!toReplace.containsKey(ch)) {
+                                toReplace.put(Character.toString(ch), alphabet.get(0));
+                                alphabet.remove(0);
+                            }
+
+                    }
+                }
+
+            }
+    }
+
 
     private void removeInaccessibleSymbols() {
         Set<String> accessibleStates = new HashSet<>();
