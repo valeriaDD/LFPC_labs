@@ -194,6 +194,24 @@ public class Production {
         return false;
     }
 
+    public Set<String> addAccessibleStates(Set<String> accessibleSet) {
+        Set<String> accessibleStates = new HashSet<>();
+
+        for (String accessibleProduction : accessibleSet)
+            if(this.nonTerminal.equals(accessibleProduction))
+                for (String word : this.derivations){
+                    StringBuilder bufferedWord = new StringBuilder(word);
+                    for (int i = 0; i < bufferedWord.length(); i++) {
+                        char charFound = bufferedWord.charAt(i);
+                        if (Character.isUpperCase(charFound)) {
+                            accessibleStates.add(Character.toString(charFound));
+                        }
+                    }
+            }
+
+        return accessibleStates;
+    }
+
 
 //  ***** END  of Elimination of empty productions functions *****
 }

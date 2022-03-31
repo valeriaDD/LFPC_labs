@@ -1,10 +1,9 @@
-import javax.sound.midi.Soundbank;
 import java.util.*;
 
 public class Grammar {
+    private final List<Production> productions = new ArrayList<>();
     private Set<String> terminals = new HashSet<>();
     private Set<String> nonTerminals = new HashSet<>();
-    private final List<Production> productions = new ArrayList<>();
 
     public void convertToChomskyNormalForm() {
         System.out.println("\n\t\t\tInput:");
@@ -17,10 +16,42 @@ public class Grammar {
     }
 
     private void removeInaccessibleSymbols() {
+        Set<String> accessibleStates = new HashSet<>();
+        Set<String> inaccessibleStates = new HashSet<>(nonTerminals);
+
+        accessibleStates.add("S");
+        Production startProduction = getProductionWith("S");
+
+        for (String word : startProduction.getDerivations()) {
+            StringBuilder bufferedWord = new StringBuilder(word);
+            for (int i = 0; i < bufferedWord.length(); i++) {
+                char charFound = bufferedWord.charAt(i);
+                if (Character.isUpperCase(charFound)) {
+                    accessibleStates.add(Character.toString(charFound));
+                }
+            }
+        }
+
+        for (Production production : this.productions) {
+            accessibleStates.addAll(production.addAccessibleStates(accessibleStates));
+        }
+
+        inaccessibleStates.removeAll(accessibleStates);
+
+        for (String nonTerminal : inaccessibleStates) {
+            Production found = getProductionWith(nonTerminal);
+            if (found != null) {
+                this.nonTerminals.remove(found.getNonTerminal());
+                this.productions.remove(found);
+            }
+        }
+
+        System.out.println("\n\t\t\tGrammar after elimination of Inaccessible productive Productions:");
+        display();
     }
 
     private void removeUnproductiveSymbols() {
-        Set<String> productiveSet = new HashSet<>(addProductiveStates());
+        Set<String> productiveSet = new HashSet<>(initiateProductiveStates());
         Set<String> unproductiveSet = new HashSet<>(nonTerminals);
 
         for (Production production : productions) {
@@ -32,7 +63,7 @@ public class Grammar {
 
         for (String nonTerminal : unproductiveSet) {
             Production found = getProductionWith(nonTerminal);
-            if (found != null){
+            if (found != null) {
                 this.nonTerminals.remove(found.getNonTerminal());
                 this.productions.remove(found);
             }
@@ -43,7 +74,7 @@ public class Grammar {
 
     }
 
-    public Set<String> addProductiveStates() {
+    public Set<String> initiateProductiveStates() {
         Set<String> productive = new HashSet<>();
 
         for (Production production : productions)
@@ -78,7 +109,7 @@ public class Grammar {
         }
 
         this.productions.removeAll(toRemove);
-        for (Production productionToRemove: toRemove) {
+        for (Production productionToRemove : toRemove) {
             this.nonTerminals.remove(productionToRemove);
         }
         System.out.println("\n\t\t\tGrammar after elimination of unit productions:");
@@ -137,7 +168,7 @@ public class Grammar {
             }
         }
         this.productions.removeAll(productionsToRemove);
-        for (Production productionToRemove: productionsToRemove) {
+        for (Production productionToRemove : productionsToRemove) {
             this.nonTerminals.remove(productionToRemove);
         }
 

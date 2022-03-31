@@ -4,5 +4,5 @@ S->bAC|B|a
 A->C
 B->AC|bS|aAa
 C->CB|-|b
-E->aE
+E->aE|a
 F->E
