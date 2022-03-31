@@ -79,9 +79,6 @@ public class Production {
             }
         }
         this.derivations.removeAll(toRemove);
-        for (int i = 0; i < toRemove.size(); i++)
-            this.derivations.add("-");
-
     }
 
     // Make all possible combinations of characters from a given String

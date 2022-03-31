@@ -1,8 +1,7 @@
-a,b
-S,A,B,C,E,F
-S->bAC|B|a
-A->C
-B->AC|bS|aAa
-C->CB|-|b
-E->aE|a
-F->E
+a,d
+S,A,B,C,D
+S->dB|A
+A->d|dS|aAdAB
+B->a|aS|A|-
+C->Aa
+D->-
