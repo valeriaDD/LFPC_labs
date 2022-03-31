@@ -164,6 +164,21 @@ public class Production {
         this.derivations.addAll(toAdd);
     }
 
+    public void chomskyFormatter(String characterToReplace, String replacementCharacter){
+        Set<String> toRemove = new HashSet<>();
+        Set<String> toAdd = new HashSet<>();
+
+        for (String word : this.derivations)
+            if (word.contains(characterToReplace) && word.length() == 2) {
+                toRemove.add(word);
+                String replacementWord = Pattern.compile(characterToReplace).matcher(word).replaceAll(replacementCharacter);
+                toAdd.add(replacementWord);
+            }
+
+        this.derivations.removeAll(toRemove);
+        this.derivations.addAll(toAdd);
+    }
+
     public boolean containsTerminal() {
         String regex = "[a-z]";
         for (String word : this.derivations) {

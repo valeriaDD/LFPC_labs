@@ -1,4 +1,5 @@
 import java.util.*;
+import java.util.stream.IntStream;
 
 public class Grammar {
     private final List<Production> productions = new ArrayList<>();
@@ -6,13 +7,57 @@ public class Grammar {
     private Set<String> nonTerminals = new HashSet<>();
 
     public void convertToChomskyNormalForm() {
-        System.out.println("\n\t\t\tInput:");
+        HashMap<String, String> toReplace = new HashMap<>();
+        ArrayList<String> alphabet = new ArrayList<>();
+
+        //generates all Upper Case Letters and append them to alphabet set
+        IntStream.rangeClosed('A', 'Z').mapToObj(var -> (char) var).forEach(
+                element -> alphabet.add(Character.toString(element))
+        );
+
+        //eliminate from alphabet all used nonTerminals
+        alphabet.removeAll(nonTerminals);
+
+        System.out.println("\n\t\t\t\tInput:");
         display();
 
         removeEmptyTransitions();
         removeUnitTransitions();
         removeUnproductiveSymbols();
         removeInaccessibleSymbols();
+
+        for (Production production : this.productions)
+            for (String word : production.getDerivations())
+                if (word.length() == 2) {
+
+                    StringBuilder bufferedWord = new StringBuilder(word);
+                    for (int i = 0; i < 2; i++) {
+                        char ch = bufferedWord.charAt(i);
+                        if (Character.isLowerCase(ch))
+                            if (toReplace.containsKey(Character.toString(ch)))
+                                break;
+                            else {
+                                toReplace.put(Character.toString(ch), alphabet.get(0));
+                                alphabet.remove(0);
+                            }
+                    }
+                }
+
+        System.out.println(toReplace);
+
+        for (Map.Entry<String, String> set : toReplace.entrySet()) {
+            this.nonTerminals.remove(set.getKey());
+            for (Production production : this.productions)
+                if (production.hasProduction(set.getKey())) {
+                    production.chomskyFormatter(set.getKey(), set.getValue());
+
+                }
+        }
+
+        System.out.println("\n\t\t\tGrammar in Chomsky Normal Form:");
+        display();
+
+
     }
 
     private void removeInaccessibleSymbols() {
