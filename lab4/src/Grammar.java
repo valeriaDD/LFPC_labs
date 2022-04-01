@@ -31,6 +31,16 @@ public class Grammar {
         toChomskyLength2(toReplace);
         toChomskyLongWords(toReplace);
 
+        for (Map.Entry<String, String> set : toReplace.entrySet()) {
+            Production newProduction = new Production();
+            Set<String> derivations = new HashSet<>();
+            derivations.add(set.getKey());
+
+            newProduction.setNonTerminal(set.getValue());
+            newProduction.setDerivations(derivations);
+            this.productions.add(newProduction);
+        }
+
         System.out.println("\n\t\t\tGrammar in Chomsky Normal Form:");
         display();
 
