@@ -17,9 +17,6 @@ public class Grammar {
                 element -> alphabet.add(Character.toString(element))
         );
 
-        //eliminate from alphabet all used nonTerminals
-        alphabet.removeAll(nonTerminals);
-
         System.out.println("\n\t\t\t\tInput:");
         display();
 
@@ -28,26 +25,11 @@ public class Grammar {
         removeUnproductiveSymbols();
         removeInaccessibleSymbols();
 
+        //eliminate from alphabet all used nonTerminals
+        alphabet.removeAll(nonTerminals);
+
         toChomskyLength2(toReplace);
-        replace(toReplace);
-
-        for (int j = 0; j <= maxWordLength; j++) {
-            for (Production production : this.productions) {
-                for (String word : production.getDerivations()) {
-                    if (word.length() != 1) {
-                        for (int i = 2; i < word.length(); i += 2) {
-                            if (!toReplace.containsKey(word.substring(i - 2, i))) {
-                                toReplace.put(word.substring(i - 2, i), alphabet.get(0));
-                                alphabet.remove(0);
-                            }
-                        }
-
-                    }
-                }
-
-            }
-        }
-        replace(toReplace);
+        toChomskyLongWords(toReplace);
 
         System.out.println("\n\t\t\tGrammar in Chomsky Normal Form:");
         display();
@@ -66,15 +48,38 @@ public class Grammar {
         }
     }
 
-    public void toChomskyLength2(HashMap<String, String> toReplace) {
+    public void setMaxWordLength() {
         for (Production production : this.productions)
-            for (String word : production.getDerivations()) {
+            for (String word : production.getDerivations())
                 if (maxWordLength < word.length())
                     maxWordLength = word.length();
+    }
+
+    public void toChomskyLongWords(HashMap<String, String> toReplace) {
+        setMaxWordLength();
+
+        for (int j = 0; j <= maxWordLength / 2; j++) {
+            for (Production production : this.productions)
+                for (String word : production.getDerivations())
+                    if (word.length() != 1)
+                        for (int i = 2; i < word.length(); i += 2)
+                            if (!toReplace.containsKey(word.substring(i - 2, i))) {
+                                toReplace.put(word.substring(i - 2, i), alphabet.get(0));
+                                alphabet.remove(0);
+                            }
+            replace(toReplace);
+        }
+    }
+
+    public void toChomskyLength2(HashMap<String, String> toReplace) {
+        for (Production production : this.productions)
+            for (String word : production.getDerivations())
                 if (word.length() == 2) {
                     StringBuilder bufferedWord = new StringBuilder(word);
+
                     for (int i = 0; i < 2; i++) {
                         char ch = bufferedWord.charAt(i);
+
                         if (Character.isLowerCase(ch))
                             if (!toReplace.containsKey(ch)) {
                                 toReplace.put(Character.toString(ch), alphabet.get(0));
@@ -83,8 +88,7 @@ public class Grammar {
 
                     }
                 }
-
-            }
+        replace(toReplace);
     }
 
 
