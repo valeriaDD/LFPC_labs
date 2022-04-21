@@ -1,3 +1,8 @@
+package lab5;
+
+import lab5.Grammar;
+import lab5.GrammarScanner;
+
 import java.io.FileNotFoundException;
 
 public class Main {

@@ -1,3 +1,5 @@
+package lab5;
+
 import java.util.Set;
 
 public class Production {
