@@ -1,7 +1,0 @@
-S
-a,d
-S,A,B,C,E,D
-S->LdX
-X->D
-L->ca|aL
-D->b|Deb
